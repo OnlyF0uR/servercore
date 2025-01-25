@@ -8,17 +8,17 @@ use pumpkin::{
 };
 use pumpkin_util::text::{color::RGBColor, TextComponent};
 
-const NAMES: [&str; 1] = ["vanish"];
-const DESCRIPTION: &str = "Vanish from the server.";
+const NAMES: [&str; 1] = ["setspawn"];
+const DESCRIPTION: &str = "Set the original server spawn.";
 
-struct VanishExecutor;
+struct SetSpawnExecutor;
 
 #[async_trait]
-impl CommandExecutor for VanishExecutor {
+impl CommandExecutor for SetSpawnExecutor {
     async fn execute<'a>(
         &self,
         sender: &mut CommandSender<'a>,
-        _: &Server,
+        server: &Server,
         _: &ConsumedArgs<'a>,
     ) -> Result<(), CommandError> {
         let player = sender.as_player().unwrap();
@@ -29,11 +29,13 @@ impl CommandExecutor for VanishExecutor {
             )
             .await;
 
+        // TODO: This
+
         Ok(())
     }
 }
 
 pub fn init_command() -> CommandTree {
     CommandTree::new(NAMES, DESCRIPTION)
-        .then(require(|sender| sender.is_player()).execute(VanishExecutor))
+        .then(require(|sender| sender.is_player()).execute(SetSpawnExecutor))
 }
