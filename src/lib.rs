@@ -1,3 +1,4 @@
+mod cache;
 mod commands;
 mod config;
 mod db;
@@ -6,11 +7,6 @@ mod utils;
 
 use core::panic;
 
-use commands::{
-    saveall, setspawn,
-    vanish::{self},
-};
-use events::join::JoinHandler;
 use pumpkin::plugin::{Context, EventPriority};
 use pumpkin_api_macros::{plugin_impl, plugin_method};
 use pumpkin_util::PermissionLvl;
@@ -28,23 +24,27 @@ async fn on_load(&mut self, server: &Context) -> Result<(), String> {
     };
 
     server
-        .register_event(JoinHandler, EventPriority::Lowest, true)
+        .register_event(events::join::JoinHandler, EventPriority::Lowest, true)
         .await;
 
     server
-        .register_command(vanish::init_command(), PermissionLvl::Three)
+        .register_command(commands::vanish::init_command(), PermissionLvl::Three)
         .await;
 
     server
-        .register_command(setspawn::init_command(), PermissionLvl::Three)
+        .register_command(commands::setspawn::init_command(), PermissionLvl::Three)
         .await;
 
     server
-        .register_command(saveall::init_command(), PermissionLvl::Three)
+        .register_command(commands::saveall::init_command(), PermissionLvl::Three)
         .await;
 
     server
         .register_command(commands::eco::init_command(), PermissionLvl::Three)
+        .await;
+
+    server
+        .register_command(commands::playtime::init_command(), PermissionLvl::Three)
         .await;
 
     Ok(())

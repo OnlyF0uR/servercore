@@ -2158,13 +2158,14 @@ name = "servercore"
 version = "0.1.0"
 dependencies = [
  "async-trait",
+ "dashmap",
  "env_logger",
  "jsonc-parser",
+ "lazy_static",
  "log",
  "pumpkin",
  "pumpkin-api-macros",
  "pumpkin-util",
- "rand",
  "serde",
  "serde_json",
  "sqlx",

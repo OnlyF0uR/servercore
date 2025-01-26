@@ -14,7 +14,7 @@ use pumpkin::{
 
 use crate::utils::todo_message;
 
-const NAMES: [&str; 1] = ["eco"];
+const NAMES: [&str; 2] = ["economy", "eco"];
 const DESCRIPTION: &str = "Manage player economy.";
 
 const ARG_PLAYER: &str = "player";
