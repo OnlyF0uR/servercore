@@ -6,6 +6,8 @@ use tokio::sync::OnceCell;
 #[derive(Debug, Deserialize, Serialize)]
 pub struct ConfigValue {
     pub db_path: String,
+    pub eco_starting_balance: f64,
+    pub eco_symbol: String,
 }
 
 #[derive(Debug)]
@@ -41,7 +43,11 @@ impl Config {
         let contents = r#"
         {
             // Database path
-            "db_path": "data.db"
+            "db_path": "data.db",
+
+            // Economy settings
+            "eco_starting_balance": 1000.0,
+            "eco_symbol": "$"
         }"#;
 
         tokio::fs::write(path, contents).await.unwrap();

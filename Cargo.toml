@@ -3,7 +3,7 @@ name = "servercore"
 version = "0.1.0"
 edition = "2021"
 authors = ["OnlyF0uR"]
-description = "All essential server logic for your Minecraft server."
+description = "Core plugin providing essential functionality to Pumpkin servers."
 
 [lib]
 crate-type = ["cdylib"]

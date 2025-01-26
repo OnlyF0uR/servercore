@@ -4,12 +4,13 @@ use dashmap::DashMap;
 use lazy_static::lazy_static;
 use pumpkin::entity::player::Player;
 
-use crate::{db::get_db, utils::current_sec};
+use crate::{config::get_config, db::get_db, utils::current_sec};
 
 #[derive(Clone, Debug, sqlx::FromRow)]
 struct DBPlayer {
     nickname: String,
     playtime: i64,
+    balance: f64,
 }
 
 #[derive(Clone, Debug)]
@@ -17,6 +18,7 @@ struct CachePlayer {
     nickname: String,
     playtime: i64,
     join_time: i64,
+    balance: f64,
 }
 
 lazy_static! {
@@ -76,13 +78,24 @@ pub fn update_nickname(player_uuid: &str, nickname: &str) {
     old_player.nickname = nickname.to_string();
 }
 
+pub fn get_balance(player_uuid: &str) -> f64 {
+    PLAYER_CACHE.get(player_uuid).map_or(0.0, |v| v.balance)
+}
+
+pub fn update_balance(player_uuid: &str, balance: f64) {
+    let mut old_player = PLAYER_CACHE.get_mut(player_uuid).unwrap();
+    old_player.balance = balance;
+}
+
 pub async fn load_player(
     player: &Arc<Player>,
-) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
+) -> Result<bool, Box<dyn std::error::Error + Send + Sync>> {
     let db = get_db().await;
 
     let uuid_s = player.gameprofile.id.to_string();
     let nickname = player.gameprofile.name.clone();
+
+    let mut new_player = false;
 
     let db_player = match sqlx::query_as::<_, DBPlayer>(
         "SELECT nickname, playtime FROM players WHERE uuid = $1",
@@ -103,10 +116,12 @@ pub async fn load_player(
                     .unwrap();
 
                 log::info!("Created new user: {}", uuid_s);
+                new_player = true;
 
                 DBPlayer {
                     nickname,
                     playtime: 0,
+                    balance: get_config().await.value.eco_starting_balance,
                 }
             } else {
                 return Err(e.into());
@@ -118,10 +133,11 @@ pub async fn load_player(
         nickname: db_player.nickname.clone(),
         playtime: db_player.playtime,
         join_time: current_sec(),
+        balance: db_player.balance,
     };
 
     PLAYER_CACHE.insert(uuid_s.to_string(), cache_player);
-    Ok(())
+    Ok(new_player)
 }
 
 pub async fn resolve_player(
@@ -133,9 +149,10 @@ pub async fn resolve_player(
     let pt = get_playtime(player_uuid);
 
     let db = get_db().await;
-    sqlx::query("UPDATE players SET nickname = $1, playtime = $2 WHERE uuid = $3")
+    sqlx::query("UPDATE players SET nickname = $1, playtime = $2, balance = $3 WHERE uuid = $4")
         .bind(&get_nickname(player_uuid))
         .bind(pt)
+        .bind(&get_balance(player_uuid))
         .bind(player_uuid)
         .execute(&db.pool)
         .await?;

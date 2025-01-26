@@ -29,7 +29,7 @@ impl DB {
                     id INTEGER PRIMARY KEY,
                     uuid TEXT NOT NULL,
                     nickname TEXT NOT NULL,
-                    money REAL NOT NULL DEFAULT 0,
+                    balance REAL NOT NULL DEFAULT 0,
                     playtime INTEGER NOT NULL DEFAULT 0
                 )",
             )

@@ -22,9 +22,7 @@ impl CommandExecutor for VanishExecutor {
         _: &Server,
         _: &ConsumedArgs<'a>,
     ) -> Result<(), CommandError> {
-        let player = sender.as_player().unwrap();
-        player.send_system_message(&todo_message()).await;
-
+        sender.send_message(todo_message()).await;
         Ok(())
     }
 }

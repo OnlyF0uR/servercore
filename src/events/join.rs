@@ -17,16 +17,28 @@ pub struct JoinHandler;
 #[async_trait]
 impl EventHandler<PlayerJoinEventImpl> for JoinHandler {
     async fn handle_blocking(&self, event: &mut PlayerJoinEventImpl) {
-        if let Err(e) = load_player(&event.get_player()).await {
-            panic!("Failed to load player: {}", e);
-        }
+        let np = match load_player(&event.get_player()).await {
+            Ok(np) => np,
+            Err(e) => panic!("Failed to load player: {}", e),
+        };
 
-        event.set_join_message(
-            TextComponent::text(format!(
-                "Welcome, {}!",
-                get_nickname(&event.get_player().gameprofile.id.to_string(),)
-            ))
-            .color_rgb(neutral_colour()),
-        );
+        if np {
+            // Teleport player to spawn
+            event.set_join_message(
+                TextComponent::text(format!(
+                    "Welcome, {}!",
+                    get_nickname(&event.get_player().gameprofile.id.to_string(),)
+                ))
+                .color_rgb(neutral_colour()),
+            );
+        } else {
+            event.set_join_message(
+                TextComponent::text(format!(
+                    "Welcome back, {}!",
+                    get_nickname(&event.get_player().gameprofile.id.to_string(),)
+                ))
+                .color_rgb(neutral_colour()),
+            );
+        }
     }
 }

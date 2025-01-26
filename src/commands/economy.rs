@@ -20,6 +20,8 @@ const DESCRIPTION: &str = "Manage player economy.";
 const ARG_PLAYER: &str = "player";
 const ARG_AMOUNT: &str = "amount";
 
+// TODO: Add support for offline players
+
 struct EcoSetExecutor;
 
 #[async_trait]

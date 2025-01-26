@@ -36,6 +36,12 @@ async fn on_load(&mut self, server: &Context) -> Result<(), String> {
         .register_command(commands::playtime::init_command(), PermissionLvl::Zero)
         .await;
     server
+        .register_command(commands::pay::init_command(), PermissionLvl::Zero)
+        .await;
+    server
+        .register_command(commands::balance::init_command(), PermissionLvl::Zero)
+        .await;
+    server
         .register_command(commands::vanish::init_command(), PermissionLvl::One)
         .await;
     server
