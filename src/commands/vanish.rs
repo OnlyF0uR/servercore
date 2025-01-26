@@ -9,7 +9,7 @@ use pumpkin::{
 
 use crate::utils::todo_message;
 
-const NAMES: [&str; 1] = ["vanish"];
+const NAMES: [&str; 2] = ["vanish", "v"];
 const DESCRIPTION: &str = "Vanish from the server.";
 
 struct VanishExecutor;

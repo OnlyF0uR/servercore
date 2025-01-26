@@ -23,28 +23,32 @@ async fn on_load(&mut self, server: &Context) -> Result<(), String> {
         panic!("Failed to setup database: {}", e);
     };
 
+    // Events
     server
         .register_event(events::join::JoinHandler, EventPriority::Lowest, true)
         .await;
-
     server
-        .register_command(commands::vanish::init_command(), PermissionLvl::Three)
+        .register_event(events::leave::LeaveHandler, EventPriority::Lowest, true)
         .await;
 
+    // Commands
+    server
+        .register_command(commands::playtime::init_command(), PermissionLvl::Zero)
+        .await;
+    server
+        .register_command(commands::vanish::init_command(), PermissionLvl::One)
+        .await;
+    server
+        .register_command(commands::staffchat::init_command(), PermissionLvl::One)
+        .await;
     server
         .register_command(commands::setspawn::init_command(), PermissionLvl::Three)
         .await;
-
     server
         .register_command(commands::saveall::init_command(), PermissionLvl::Three)
         .await;
-
     server
-        .register_command(commands::eco::init_command(), PermissionLvl::Three)
-        .await;
-
-    server
-        .register_command(commands::playtime::init_command(), PermissionLvl::Three)
+        .register_command(commands::economy::init_command(), PermissionLvl::Three)
         .await;
 
     Ok(())

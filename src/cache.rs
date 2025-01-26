@@ -4,12 +4,19 @@ use dashmap::DashMap;
 use lazy_static::lazy_static;
 use pumpkin::entity::player::Player;
 
-use crate::db::get_db;
+use crate::{db::get_db, utils::current_sec};
 
 #[derive(Clone, Debug, sqlx::FromRow)]
+struct DBPlayer {
+    nickname: String,
+    playtime: i64,
+}
+
+#[derive(Clone, Debug)]
 struct CachePlayer {
     nickname: String,
     playtime: i64,
+    join_time: i64,
 }
 
 lazy_static! {
@@ -17,18 +24,20 @@ lazy_static! {
     static ref PLAYER_CACHE: DashMap<String, CachePlayer> = DashMap::new();
 }
 
+// Get the amount of seconds the user has been online
+// on the server
 pub fn get_playtime(player_uuid: &str) -> i64 {
-    // Get the playtime at join
-    let jt = PLAYER_CACHE.get(player_uuid).map_or(0, |v| v.playtime);
+    // Get the previous play time
+    let old_pt = PLAYER_CACHE.get(player_uuid).map_or(0, |v| v.playtime);
 
-    // Get current time in ms from std
-    let ct = std::time::SystemTime::now()
-        .duration_since(std::time::UNIX_EPOCH)
-        .unwrap()
-        .as_secs() as i64;
+    // Now we need to calculate how much additional time the user spent on the server
+    let jt = PLAYER_CACHE.get(player_uuid).map_or(0, |v| v.join_time);
+    let ct = current_sec();
 
-    // Add the dif to the original playtime
-    jt + ct
+    let diff = ct - jt;
+
+    // Return the sum of the old playtime and the time spent on the server
+    old_pt + diff
 }
 
 pub fn get_playtime_display(player_uuid: &str) -> String {
@@ -63,13 +72,8 @@ pub fn get_nickname(player_uuid: &str) -> String {
 }
 
 pub fn update_nickname(player_uuid: &str, nickname: &str) {
-    PLAYER_CACHE.insert(
-        player_uuid.to_string(),
-        CachePlayer {
-            nickname: nickname.to_string(),
-            playtime: get_playtime(player_uuid),
-        },
-    );
+    let mut old_player = PLAYER_CACHE.get_mut(player_uuid).unwrap();
+    old_player.nickname = nickname.to_string();
 }
 
 pub async fn load_player(
@@ -80,7 +84,7 @@ pub async fn load_player(
     let uuid_s = player.gameprofile.id.to_string();
     let nickname = player.gameprofile.name.clone();
 
-    let db_player = match sqlx::query_as::<_, CachePlayer>(
+    let db_player = match sqlx::query_as::<_, DBPlayer>(
         "SELECT nickname, playtime FROM players WHERE uuid = $1",
     )
     .bind(player.gameprofile.id.to_string())
@@ -100,7 +104,7 @@ pub async fn load_player(
 
                 log::info!("Created new user: {}", uuid_s);
 
-                CachePlayer {
+                DBPlayer {
                     nickname,
                     playtime: 0,
                 }
@@ -110,7 +114,13 @@ pub async fn load_player(
         }
     };
 
-    PLAYER_CACHE.insert(uuid_s.to_string(), db_player);
+    let cache_player = CachePlayer {
+        nickname: db_player.nickname.clone(),
+        playtime: db_player.playtime,
+        join_time: current_sec(),
+    };
+
+    PLAYER_CACHE.insert(uuid_s.to_string(), cache_player);
     Ok(())
 }
 

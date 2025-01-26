@@ -9,7 +9,7 @@ use pumpkin::{
     },
     server::Server,
 };
-use pumpkin_util::text::TextComponent;
+use pumpkin_util::{text::TextComponent, PermissionLvl};
 
 use crate::{cache::get_playtime_display, utils::neutral_colour};
 
@@ -70,6 +70,12 @@ impl CommandExecutor for PlaytimeExecutorSelf {
 // TODO: Move to a proper consumer instead of SimpleArgConsumer for f64s
 pub fn init_command() -> CommandTree {
     CommandTree::new(NAMES, DESCRIPTION)
-        .then(argument(ARG_PLAYER, PlayersArgumentConsumer).execute(PlaytimeExecutor))
+        .then(
+            argument(ARG_PLAYER, PlayersArgumentConsumer).then(
+                // Viewing playtime from another player requires permission level 1
+                require(|sender| sender.has_permission_lvl(PermissionLvl::One))
+                    .execute(PlaytimeExecutor),
+            ),
+        )
         .then(require(|sender| sender.is_player()).execute(PlaytimeExecutorSelf))
 }

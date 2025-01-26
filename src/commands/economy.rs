@@ -6,7 +6,7 @@ use pumpkin::{
         },
         dispatcher::CommandError,
         tree::CommandTree,
-        tree_builder::{argument, literal, require},
+        tree_builder::{argument, literal},
         CommandExecutor, CommandSender,
     },
     server::Server,
@@ -115,29 +115,27 @@ impl CommandExecutor for EcoResetExecutor {
 
 // TODO: Move to a proper consumer instead of SimpleArgConsumer for f64s
 pub fn init_command() -> CommandTree {
-    CommandTree::new(NAMES, DESCRIPTION).then(
-        require(|sender| sender.has_permission_lvl(pumpkin_util::PermissionLvl::Three))
-            .then(
-                literal("set").then(
-                    argument(ARG_PLAYER, PlayersArgumentConsumer)
-                        .then(argument(ARG_AMOUNT, SimpleArgConsumer).execute(EcoSetExecutor)),
-                ),
-            )
-            .then(
-                literal("add").then(
-                    argument(ARG_PLAYER, PlayersArgumentConsumer)
-                        .then(argument(ARG_AMOUNT, SimpleArgConsumer).execute(EcoAddExecutor)),
-                ),
-            )
-            .then(
-                literal("remove").then(
-                    argument(ARG_PLAYER, PlayersArgumentConsumer)
-                        .then(argument(ARG_AMOUNT, SimpleArgConsumer).execute(EcoRemoveExecutor)),
-                ),
-            )
-            .then(
-                literal("reset")
-                    .then(argument(ARG_PLAYER, PlayersArgumentConsumer).execute(EcoResetExecutor)),
+    CommandTree::new(NAMES, DESCRIPTION)
+        .then(
+            literal("set").then(
+                argument(ARG_PLAYER, PlayersArgumentConsumer)
+                    .then(argument(ARG_AMOUNT, SimpleArgConsumer).execute(EcoSetExecutor)),
             ),
-    )
+        )
+        .then(
+            literal("add").then(
+                argument(ARG_PLAYER, PlayersArgumentConsumer)
+                    .then(argument(ARG_AMOUNT, SimpleArgConsumer).execute(EcoAddExecutor)),
+            ),
+        )
+        .then(
+            literal("remove").then(
+                argument(ARG_PLAYER, PlayersArgumentConsumer)
+                    .then(argument(ARG_AMOUNT, SimpleArgConsumer).execute(EcoRemoveExecutor)),
+            ),
+        )
+        .then(
+            literal("reset")
+                .then(argument(ARG_PLAYER, PlayersArgumentConsumer).execute(EcoResetExecutor)),
+        )
 }

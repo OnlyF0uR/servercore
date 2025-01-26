@@ -1,8 +1,8 @@
 use async_trait::async_trait;
 use pumpkin::{
     command::{
-        args::ConsumedArgs, dispatcher::CommandError, tree::CommandTree, tree_builder::require,
-        CommandExecutor, CommandSender,
+        args::ConsumedArgs, dispatcher::CommandError, tree::CommandTree, CommandExecutor,
+        CommandSender,
     },
     server::Server,
 };
@@ -34,8 +34,5 @@ impl CommandExecutor for SaveallExecutor {
 }
 
 pub fn init_command() -> CommandTree {
-    CommandTree::new(NAMES, DESCRIPTION).then(
-        require(|sender| sender.has_permission_lvl(pumpkin_util::PermissionLvl::Four))
-            .execute(SaveallExecutor),
-    )
+    CommandTree::new(NAMES, DESCRIPTION).execute(SaveallExecutor)
 }
