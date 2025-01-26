@@ -64,12 +64,13 @@ impl Config {
         // }
     }
 
-    // pub async fn save(&self) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
-    //     let data = serde_json::to_string_pretty(&self.value)?;
-    //     tokio::fs::write(&self.path, data).await?;
+    #[allow(dead_code)]
+    pub async fn save(&self) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
+        let data = serde_json::to_string_pretty(&self.value)?;
+        tokio::fs::write(&self.path, data).await?;
 
-    //     Ok(())
-    // }
+        Ok(())
+    }
 }
 
 static CONFIG_INSTANCE: OnceCell<Arc<Config>> = OnceCell::const_new();

@@ -25,7 +25,7 @@ impl DB {
             log::info!("Setting up database.");
             sqlx::query(
                 "
-                CREATE TABLE users (
+                CREATE TABLE players (
                     id INTEGER PRIMARY KEY,
                     uuid TEXT NOT NULL,
                     nickname TEXT NOT NULL,

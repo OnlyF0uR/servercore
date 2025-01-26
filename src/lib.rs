@@ -2,6 +2,7 @@ mod commands;
 mod config;
 mod db;
 mod events;
+mod utils;
 
 use core::panic;
 
@@ -40,6 +41,10 @@ async fn on_load(&mut self, server: &Context) -> Result<(), String> {
 
     server
         .register_command(saveall::init_command(), PermissionLvl::Three)
+        .await;
+
+    server
+        .register_command(commands::eco::init_command(), PermissionLvl::Three)
         .await;
 
     Ok(())

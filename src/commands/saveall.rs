@@ -1,12 +1,14 @@
 use async_trait::async_trait;
 use pumpkin::{
     command::{
-        args::ConsumedArgs, dispatcher::CommandError, tree::CommandTree, CommandExecutor,
-        CommandSender,
+        args::ConsumedArgs, dispatcher::CommandError, tree::CommandTree, tree_builder::require,
+        CommandExecutor, CommandSender,
     },
     server::Server,
 };
 use pumpkin_util::text::TextComponent;
+
+use crate::utils::success_colour;
 
 const NAMES: [&str; 1] = ["saveall"];
 const DESCRIPTION: &str = "Save all worlds.";
@@ -24,7 +26,7 @@ impl CommandExecutor for SaveallExecutor {
         server.save().await;
 
         sender
-            .send_message(TextComponent::text("Saved all worlds."))
+            .send_message(TextComponent::text("Saved all worlds.").color_rgb(success_colour()))
             .await;
 
         Ok(())
@@ -32,5 +34,8 @@ impl CommandExecutor for SaveallExecutor {
 }
 
 pub fn init_command() -> CommandTree {
-    CommandTree::new(NAMES, DESCRIPTION).execute(SaveallExecutor)
+    CommandTree::new(NAMES, DESCRIPTION).then(
+        require(|sender| sender.has_permission_lvl(pumpkin_util::PermissionLvl::Four))
+            .execute(SaveallExecutor),
+    )
 }
