@@ -1,7 +1,9 @@
 use async_trait::async_trait;
 use pumpkin::{
     command::{
-        args::ConsumedArgs, dispatcher::CommandError, tree::CommandTree, tree_builder::require,
+        args::ConsumedArgs,
+        dispatcher::CommandError,
+        tree::{builder::require, CommandTree},
         CommandExecutor, CommandSender,
     },
     server::Server,

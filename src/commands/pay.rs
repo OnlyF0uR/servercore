@@ -1,12 +1,12 @@
 use async_trait::async_trait;
 use pumpkin::{
     command::{
-        args::{
-            arg_players::PlayersArgumentConsumer, arg_simple::SimpleArgConsumer, Arg, ConsumedArgs,
-        },
+        args::{players::PlayersArgumentConsumer, simple::SimpleArgConsumer, Arg, ConsumedArgs},
         dispatcher::CommandError,
-        tree::CommandTree,
-        tree_builder::{argument, require},
+        tree::{
+            builder::{argument, require},
+            CommandTree,
+        },
         CommandExecutor, CommandSender,
     },
     server::Server,
@@ -15,6 +15,7 @@ use pumpkin_util::text::TextComponent;
 
 use crate::{
     cache::{get_balance, update_balance},
+    config::get_config,
     utils::{neutral_colour, success_colour},
 };
 
@@ -58,11 +59,6 @@ impl CommandExecutor for PayExecutor {
             return Err(CommandError::InvalidConsumption(Some(ARG_AMOUNT.into())));
         }
 
-        // We need to check if the amount is infinite
-        if amount.is_infinite() {
-            return Err(CommandError::InvalidConsumption(Some(ARG_AMOUNT.into())));
-        }
-
         let player = sender.as_player().unwrap();
         let payer_balance = get_balance(&player.gameprofile.id.to_string());
 
@@ -78,8 +74,13 @@ impl CommandExecutor for PayExecutor {
         update_balance(&player.gameprofile.id.to_string(), payer_balance - amount);
         update_balance(&target.gameprofile.id.to_string(), target_balance + amount);
 
-        let sent_msg = format!("You paid {} to {}.", amount, target.gameprofile.name);
-        let received_msg = format!("{} paid you {}.", player.gameprofile.name, amount);
+        let symbol = get_config().await.value.eco_symbol.clone();
+
+        let sent_msg = format!(
+            "You paid {}{} to {}.",
+            symbol, amount, target.gameprofile.name
+        );
+        let received_msg = format!("{} paid you {}{}.", player.gameprofile.name, symbol, amount);
 
         player
             .send_system_message(&TextComponent::text(sent_msg).color_rgb(success_colour()))

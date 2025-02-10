@@ -8,6 +8,9 @@ description = "Core plugin providing essential functionality to Pumpkin servers.
 [lib]
 crate-type = ["cdylib"]
 
+[profile.release] 
+lto = true
+
 [dependencies]
 pumpkin = { git = "https://github.com/Pumpkin-MC/Pumpkin.git", branch = "master", package = "pumpkin" }
 pumpkin-util = { git = "https://github.com/Pumpkin-MC/Pumpkin.git", branch = "master", package = "pumpkin-util" }
@@ -17,8 +20,6 @@ async-trait = "0.1.85"
 tokio = { version = "1.43", features = ["full"] }
 dashmap = "6.1.0"
 lazy_static = "1.5.0"
-
-env_logger = "0.11.6"
 log = "0.4.25"
 sqlx = { version = "0.8", features = ["runtime-tokio", "sqlite"] }
 jsonc-parser = { version = "0.26.2", features = ["serde"] }

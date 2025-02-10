@@ -1,18 +1,23 @@
 use async_trait::async_trait;
 use pumpkin::{
     command::{
-        args::{
-            arg_players::PlayersArgumentConsumer, arg_simple::SimpleArgConsumer, Arg, ConsumedArgs,
-        },
+        args::{players::PlayersArgumentConsumer, simple::SimpleArgConsumer, Arg, ConsumedArgs},
         dispatcher::CommandError,
-        tree::CommandTree,
-        tree_builder::{argument, literal},
+        tree::{
+            builder::{argument, literal},
+            CommandTree,
+        },
         CommandExecutor, CommandSender,
     },
     server::Server,
 };
+use pumpkin_util::text::TextComponent;
 
-use crate::utils::todo_message;
+use crate::{
+    cache::{get_balance, update_balance},
+    config::get_config,
+    utils::success_colour,
+};
 
 const NAMES: [&str; 2] = ["economy", "eco"];
 const DESCRIPTION: &str = "Manage player economy.";
@@ -30,10 +35,30 @@ impl CommandExecutor for EcoSetExecutor {
         &self,
         sender: &mut CommandSender<'a>,
         _: &Server,
-        _: &ConsumedArgs<'a>,
+        args: &ConsumedArgs<'a>,
     ) -> Result<(), CommandError> {
-        let player = sender.as_player().unwrap();
-        player.send_system_message(&todo_message()).await;
+        let Some(Arg::Players(targets)) = args.get(&ARG_PLAYER) else {
+            return Err(CommandError::InvalidConsumption(Some(ARG_PLAYER.into())));
+        };
+
+        let Some(Arg::Simple(amount)) = args.get(&ARG_AMOUNT) else {
+            return Err(CommandError::InvalidConsumption(Some(ARG_AMOUNT.into())));
+        };
+
+        // We need to parse the amount to a f64
+        let amount = amount
+            .parse::<f64>()
+            .map_err(|_| CommandError::InvalidConsumption(Some(ARG_AMOUNT.into())))?;
+
+        // We need to add the amount to the player's balance
+        for target in targets {
+            update_balance(&target.gameprofile.id.to_string(), amount);
+        }
+
+        let msg = format!("Balance{} set.", if targets.len() == 1 { "" } else { "s" });
+        sender
+            .send_message(TextComponent::text(msg).color_rgb(success_colour()))
+            .await;
 
         Ok(())
     }
@@ -67,15 +92,19 @@ impl CommandExecutor for EcoAddExecutor {
             return Err(CommandError::InvalidConsumption(Some(ARG_AMOUNT.into())));
         }
 
-        // We need to check if the amount is infinite
-        if amount.is_infinite() {
-            return Err(CommandError::InvalidConsumption(Some(ARG_AMOUNT.into())));
+        // We need to add the amount to the player's balance
+        for target in targets {
+            let target_balance = get_balance(&target.gameprofile.id.to_string());
+            update_balance(&target.gameprofile.id.to_string(), target_balance + amount);
         }
 
-        log::info!("Adding {} to {}n", amount, targets.len());
-
-        let player = sender.as_player().unwrap();
-        player.send_system_message(&todo_message()).await;
+        let msg = format!(
+            "Balance{} increased.",
+            if targets.len() == 1 { "" } else { "s" }
+        );
+        sender
+            .send_message(TextComponent::text(msg).color_rgb(success_colour()))
+            .await;
 
         Ok(())
     }
@@ -89,10 +118,39 @@ impl CommandExecutor for EcoRemoveExecutor {
         &self,
         sender: &mut CommandSender<'a>,
         _: &Server,
-        _: &ConsumedArgs<'a>,
+        args: &ConsumedArgs<'a>,
     ) -> Result<(), CommandError> {
-        let player = sender.as_player().unwrap();
-        player.send_system_message(&todo_message()).await;
+        let Some(Arg::Players(targets)) = args.get(&ARG_PLAYER) else {
+            return Err(CommandError::InvalidConsumption(Some(ARG_PLAYER.into())));
+        };
+
+        let Some(Arg::Simple(amount)) = args.get(&ARG_AMOUNT) else {
+            return Err(CommandError::InvalidConsumption(Some(ARG_AMOUNT.into())));
+        };
+
+        // We need to parse the amount to a f64
+        let amount = amount
+            .parse::<f64>()
+            .map_err(|_| CommandError::InvalidConsumption(Some(ARG_AMOUNT.into())))?;
+
+        // We need to check if the amount is negative
+        if amount < 0.0 {
+            return Err(CommandError::InvalidConsumption(Some(ARG_AMOUNT.into())));
+        }
+
+        // We need to add the amount to the player's balance
+        for target in targets {
+            let target_balance = get_balance(&target.gameprofile.id.to_string());
+            update_balance(&target.gameprofile.id.to_string(), target_balance - amount);
+        }
+
+        let msg = format!(
+            "Balance{} reduced.",
+            if targets.len() == 1 { "" } else { "s" }
+        );
+        sender
+            .send_message(TextComponent::text(msg).color_rgb(success_colour()))
+            .await;
 
         Ok(())
     }
@@ -106,10 +164,26 @@ impl CommandExecutor for EcoResetExecutor {
         &self,
         sender: &mut CommandSender<'a>,
         _: &Server,
-        _: &ConsumedArgs<'a>,
+        args: &ConsumedArgs<'a>,
     ) -> Result<(), CommandError> {
-        let player = sender.as_player().unwrap();
-        player.send_system_message(&todo_message()).await;
+        let Some(Arg::Players(targets)) = args.get(&ARG_PLAYER) else {
+            return Err(CommandError::InvalidConsumption(Some(ARG_PLAYER.into())));
+        };
+
+        let default_amount = get_config().await.value.eco_starting_balance;
+
+        // We need to add the amount to the player's balance
+        for target in targets {
+            update_balance(&target.gameprofile.id.to_string(), default_amount);
+        }
+
+        let msg = format!(
+            "Balance{} reset.",
+            if targets.len() == 1 { "" } else { "s" }
+        );
+        sender
+            .send_message(TextComponent::text(msg).color_rgb(success_colour()))
+            .await;
 
         Ok(())
     }

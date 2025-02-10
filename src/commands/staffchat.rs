@@ -1,10 +1,9 @@
 use async_trait::async_trait;
 use pumpkin::{
     command::{
-        args::{arg_message::MsgArgConsumer, Arg, ConsumedArgs},
+        args::{message::MsgArgConsumer, Arg, ConsumedArgs},
         dispatcher::CommandError,
-        tree::CommandTree,
-        tree_builder::argument,
+        tree::{builder::argument, CommandTree},
         CommandExecutor, CommandSender,
     },
     server::Server,
