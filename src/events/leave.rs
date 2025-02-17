@@ -4,7 +4,7 @@ use crate::{
 };
 use async_trait::async_trait;
 use pumpkin::plugin::{
-    player::{PlayerEvent, PlayerLeaveEvent},
+    player::{player_leave::PlayerLeaveEvent, PlayerEvent},
     EventHandler,
 };
 use pumpkin_api_macros::with_runtime;

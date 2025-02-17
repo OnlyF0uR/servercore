@@ -152,9 +152,9 @@ checksum = "f61dac84819c6588b558454b194026eb1f09c293b9036ae9b159e74e73ab6cf9"
 
 [[package]]
 name = "cc"
-version = "1.2.13"
+version = "1.2.14"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c7777341816418c02e033934a09f20dc0ccaf65a5201ef8a450ae0105a573fda"
+checksum = "0c3d1b2e905a3a7b00a6141adb0e4c0bb941d11caf55349d863942a1cc44e3c9"
 dependencies = [
  "jobserver",
  "libc",
@@ -415,6 +415,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "derive-getters"
+version = "0.5.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "74ef43543e701c01ad77d3a5922755c6a1d71b22d942cb8042be4994b380caff"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
 name = "derive_more"
 version = "2.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -508,9 +519,9 @@ dependencies = [
 
 [[package]]
 name = "equivalent"
-version = "1.0.1"
+version = "1.0.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5443807d6dff69373d433ab9ef5378ad8df50ca6298caf15de6e52e24aaf54d5"
+checksum = "877a4ace8713b0bcf2a4e7eec82529c029f1d0619886d18145fea96c3ffe5c0f"
 
 [[package]]
 name = "errno"
@@ -548,17 +559,6 @@ dependencies = [
  "concurrent-queue",
  "parking",
  "pin-project-lite",
-]
-
-[[package]]
-name = "fastnbt"
-version = "2.5.0"
-source = "git+https://github.com/owengage/fastnbt.git#e2a5d8a7001d4f074ae99fd21bb485667934baeb"
-dependencies = [
- "byteorder",
- "cesu8",
- "serde",
- "serde_bytes",
 ]
 
 [[package]]
@@ -1312,9 +1312,9 @@ checksum = "6877bb514081ee2a7ff5ef9de3281f14a4dd4bceac4c09388074a6b5df8a139a"
 
 [[package]]
 name = "miniz_oxide"
-version = "0.8.3"
+version = "0.8.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b8402cab7aefae129c6977bb0ff1b8fd9a04eb5b51efc50a70bea51cda0c7924"
+checksum = "b3b1c9bd4fe1f0f8b387f6eb9eb3b4a1aa26185e5750efb9140301703f62cd1b"
 dependencies = [
  "adler2",
  "simd-adler32",
@@ -1506,6 +1506,51 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e3148f5046208a5d56bcfc03053e3ca6334e51da8dfb19b6cdc8b306fae3283e"
 
 [[package]]
+name = "pest"
+version = "2.7.15"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8b7cafe60d6cf8e62e1b9b2ea516a089c008945bb5a275416789e7db0bc199dc"
+dependencies = [
+ "memchr",
+ "thiserror",
+ "ucd-trie",
+]
+
+[[package]]
+name = "pest_derive"
+version = "2.7.15"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "816518421cfc6887a0d62bf441b6ffb4536fcc926395a69e1a85852d4363f57e"
+dependencies = [
+ "pest",
+ "pest_generator",
+]
+
+[[package]]
+name = "pest_generator"
+version = "2.7.15"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7d1396fd3a870fc7838768d171b4616d5c91f6cc25e377b673d714567d99377b"
+dependencies = [
+ "pest",
+ "pest_meta",
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
+name = "pest_meta"
+version = "2.7.15"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e1e58089ea25d717bfd31fb534e4f3afcc2cc569c70de3e239778991ea3b7dea"
+dependencies = [
+ "once_cell",
+ "pest",
+ "sha2",
+]
+
+[[package]]
 name = "pin-project-lite"
 version = "0.2.16"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1584,7 +1629,7 @@ dependencies = [
 [[package]]
 name = "pumpkin"
 version = "0.1.0-dev"
-source = "git+https://github.com/Pumpkin-MC/Pumpkin.git?branch=master#daa67c2dfad3a8a7606fc8262eeb4fd3e05fadae"
+source = "git+https://github.com/Pumpkin-MC/Pumpkin.git?branch=master#148ac38fe3a6c43ff8d21d525dd0daad8952a3be"
 dependencies = [
  "async-trait",
  "base64",
@@ -1627,7 +1672,7 @@ dependencies = [
 [[package]]
 name = "pumpkin-api-macros"
 version = "0.1.0"
-source = "git+https://github.com/Pumpkin-MC/Pumpkin.git?branch=master#daa67c2dfad3a8a7606fc8262eeb4fd3e05fadae"
+source = "git+https://github.com/Pumpkin-MC/Pumpkin.git?branch=master#148ac38fe3a6c43ff8d21d525dd0daad8952a3be"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -1637,7 +1682,7 @@ dependencies = [
 [[package]]
 name = "pumpkin-config"
 version = "0.1.0"
-source = "git+https://github.com/Pumpkin-MC/Pumpkin.git?branch=master#daa67c2dfad3a8a7606fc8262eeb4fd3e05fadae"
+source = "git+https://github.com/Pumpkin-MC/Pumpkin.git?branch=master#148ac38fe3a6c43ff8d21d525dd0daad8952a3be"
 dependencies = [
  "log",
  "pumpkin-util",
@@ -1649,7 +1694,7 @@ dependencies = [
 [[package]]
 name = "pumpkin-data"
 version = "0.1.0"
-source = "git+https://github.com/Pumpkin-MC/Pumpkin.git?branch=master#daa67c2dfad3a8a7606fc8262eeb4fd3e05fadae"
+source = "git+https://github.com/Pumpkin-MC/Pumpkin.git?branch=master#148ac38fe3a6c43ff8d21d525dd0daad8952a3be"
 dependencies = [
  "heck",
  "proc-macro2",
@@ -1663,7 +1708,7 @@ dependencies = [
 [[package]]
 name = "pumpkin-inventory"
 version = "0.1.0"
-source = "git+https://github.com/Pumpkin-MC/Pumpkin.git?branch=master#daa67c2dfad3a8a7606fc8262eeb4fd3e05fadae"
+source = "git+https://github.com/Pumpkin-MC/Pumpkin.git?branch=master#148ac38fe3a6c43ff8d21d525dd0daad8952a3be"
 dependencies = [
  "log",
  "pumpkin-data",
@@ -1679,7 +1724,7 @@ dependencies = [
 [[package]]
 name = "pumpkin-macros"
 version = "0.1.0"
-source = "git+https://github.com/Pumpkin-MC/Pumpkin.git?branch=master#daa67c2dfad3a8a7606fc8262eeb4fd3e05fadae"
+source = "git+https://github.com/Pumpkin-MC/Pumpkin.git?branch=master#148ac38fe3a6c43ff8d21d525dd0daad8952a3be"
 dependencies = [
  "heck",
  "proc-macro2",
@@ -1693,7 +1738,7 @@ dependencies = [
 [[package]]
 name = "pumpkin-nbt"
 version = "0.1.0"
-source = "git+https://github.com/Pumpkin-MC/Pumpkin.git?branch=master#daa67c2dfad3a8a7606fc8262eeb4fd3e05fadae"
+source = "git+https://github.com/Pumpkin-MC/Pumpkin.git?branch=master#148ac38fe3a6c43ff8d21d525dd0daad8952a3be"
 dependencies = [
  "bytes",
  "cesu8",
@@ -1704,7 +1749,7 @@ dependencies = [
 [[package]]
 name = "pumpkin-protocol"
 version = "0.1.0"
-source = "git+https://github.com/Pumpkin-MC/Pumpkin.git?branch=master#daa67c2dfad3a8a7606fc8262eeb4fd3e05fadae"
+source = "git+https://github.com/Pumpkin-MC/Pumpkin.git?branch=master#148ac38fe3a6c43ff8d21d525dd0daad8952a3be"
 dependencies = [
  "aes",
  "bytes",
@@ -1725,9 +1770,10 @@ dependencies = [
 [[package]]
 name = "pumpkin-registry"
 version = "0.1.0"
-source = "git+https://github.com/Pumpkin-MC/Pumpkin.git?branch=master#daa67c2dfad3a8a7606fc8262eeb4fd3e05fadae"
+source = "git+https://github.com/Pumpkin-MC/Pumpkin.git?branch=master#148ac38fe3a6c43ff8d21d525dd0daad8952a3be"
 dependencies = [
  "indexmap",
+ "pumpkin-data",
  "pumpkin-nbt",
  "pumpkin-protocol",
  "pumpkin-util",
@@ -1738,7 +1784,7 @@ dependencies = [
 [[package]]
 name = "pumpkin-util"
 version = "0.1.0"
-source = "git+https://github.com/Pumpkin-MC/Pumpkin.git?branch=master#daa67c2dfad3a8a7606fc8262eeb4fd3e05fadae"
+source = "git+https://github.com/Pumpkin-MC/Pumpkin.git?branch=master#148ac38fe3a6c43ff8d21d525dd0daad8952a3be"
 dependencies = [
  "bytes",
  "colored 3.0.0",
@@ -1753,13 +1799,13 @@ dependencies = [
 [[package]]
 name = "pumpkin-world"
 version = "0.1.0"
-source = "git+https://github.com/Pumpkin-MC/Pumpkin.git?branch=master#daa67c2dfad3a8a7606fc8262eeb4fd3e05fadae"
+source = "git+https://github.com/Pumpkin-MC/Pumpkin.git?branch=master#148ac38fe3a6c43ff8d21d525dd0daad8952a3be"
 dependencies = [
  "bytes",
  "dashmap",
+ "derive-getters",
  "derive_more",
  "enum_dispatch",
- "fastnbt",
  "file-guard",
  "flate2",
  "indexmap",
@@ -1777,6 +1823,7 @@ dependencies = [
  "rayon",
  "serde",
  "serde_json",
+ "serde_json5",
  "thiserror",
  "tokio",
  "zstd",
@@ -1822,9 +1869,9 @@ dependencies = [
 
 [[package]]
 name = "quinn-udp"
-version = "0.5.9"
+version = "0.5.10"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1c40286217b4ba3a71d644d752e6a0b71f13f1b6a2c5311acfcbe0c2418ed904"
+checksum = "e46f3055866785f6b92bc6164b76be02ca8f2eb4b002c0354b28cf4c119e5944"
 dependencies = [
  "cfg_aliases",
  "libc",
@@ -1968,15 +2015,14 @@ dependencies = [
 
 [[package]]
 name = "ring"
-version = "0.17.8"
+version = "0.17.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c17fa4cb658e3583423e915b9f3acc01cceaee1860e33d59ebae66adc3a2dc0d"
+checksum = "e75ec5e92c4d8aede845126adc388046234541629e76029599ed35a003c7ed24"
 dependencies = [
  "cc",
  "cfg-if",
  "getrandom 0.2.15",
  "libc",
- "spin",
  "untrusted",
  "windows-sys 0.52.0",
 ]
@@ -2046,9 +2092,9 @@ dependencies = [
 
 [[package]]
 name = "rustls"
-version = "0.23.22"
+version = "0.23.23"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9fb9263ab4eb695e42321db096e3b8fbd715a59b154d5c88d82db2175b681ba7"
+checksum = "47796c98c480fce5406ef69d1c76378375492c3b0a0de587be0c1d9feb12f395"
 dependencies = [
  "once_cell",
  "ring",
@@ -2143,15 +2189,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "serde_bytes"
-version = "0.11.15"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "387cc504cb06bb40a96c8e04e951fe01854cf6bc921053c954e4a606d9675c6a"
-dependencies = [
- "serde",
-]
-
-[[package]]
 name = "serde_derive"
 version = "1.0.217"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2171,6 +2208,16 @@ dependencies = [
  "itoa",
  "memchr",
  "ryu",
+ "serde",
+]
+
+[[package]]
+name = "serde_json5"
+version = "0.2.0"
+source = "git+https://github.com/kralverde/serde_json5.git#6d320e959a3f596dc4313c1036eae784891466d8"
+dependencies = [
+ "pest",
+ "pest_derive",
  "serde",
 ]
 
@@ -2301,9 +2348,9 @@ dependencies = [
 
 [[package]]
 name = "smallvec"
-version = "1.13.2"
+version = "1.14.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3c5e1a9a646d36c3599cd173a41282daf47c44583ad367b8e6837255952e5c67"
+checksum = "7fcf8323ef1faaee30a44a340193b1ac6814fd9b7b4e88e9d4519a3e4abe1cfd"
 dependencies = [
  "serde",
 ]
@@ -2611,9 +2658,9 @@ dependencies = [
 
 [[package]]
 name = "tempfile"
-version = "3.16.0"
+version = "3.17.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "38c246215d7d24f48ae091a2902398798e05d978b24315d6efbc00ede9a8bb91"
+checksum = "a40f762a77d2afa88c2d919489e390a12bdd261ed568e60cfa7e48d4e20f0d33"
 dependencies = [
  "cfg-if",
  "fastrand",
@@ -2787,9 +2834,9 @@ dependencies = [
 
 [[package]]
 name = "toml_edit"
-version = "0.22.23"
+version = "0.22.24"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "02a8b472d1a3d7c18e2d61a489aee3453fd9031c33e4f55bd533f4a7adca1bee"
+checksum = "17b4795ff5edd201c7cd6dca065ae59972ce77d1b80fa0a84d94950ece7d1474"
 dependencies = [
  "indexmap",
  "serde",
@@ -2868,6 +2915,12 @@ name = "typenum"
 version = "1.17.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "42ff0bf0c66b8238c6f3b578df37d0b7848e55df8577b3f74f92a69acceeb825"
+
+[[package]]
+name = "ucd-trie"
+version = "0.1.7"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2896d95c02a80c6d6a5d6e953d479f5ddf2dfdb6a244441010e373ac0fb88971"
 
 [[package]]
 name = "unicode-bidi"
@@ -3343,9 +3396,9 @@ checksum = "589f6da84c646204747d1270a2a5661ea66ed1cced2631d546fdfb155959f9ec"
 
 [[package]]
 name = "winnow"
-version = "0.7.1"
+version = "0.7.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "86e376c75f4f43f44db463cf729e0d3acbf954d13e22c51e26e4c264b4ab545f"
+checksum = "59690dea168f2198d1a3b0cac23b8063efcd11012f10ae4698f284808c8ef603"
 dependencies = [
  "memchr",
 ]
