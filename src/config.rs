@@ -1,6 +1,9 @@
 use jsonc_parser::parse_to_serde_value;
 use serde::{Deserialize, Serialize};
-use std::{path::Path, sync::Arc};
+use std::{
+    path::{Path, PathBuf},
+    sync::Arc,
+};
 use tokio::sync::OnceCell;
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -81,8 +84,8 @@ impl Config {
 
 static CONFIG_INSTANCE: OnceCell<Arc<Config>> = OnceCell::const_new();
 
-pub async fn setup_config(path: &str) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
-    let path = format!("{}/config.jsonc", path);
+pub async fn setup_config(path: &PathBuf) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
+    let path = format!("{}/config.jsonc", path.to_str().unwrap());
 
     let db = Config::init(&path).await?;
     if let Err(e) = CONFIG_INSTANCE.set(Arc::new(db)) {

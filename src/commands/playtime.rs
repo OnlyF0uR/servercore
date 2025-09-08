@@ -13,7 +13,10 @@ use pumpkin::{
 };
 use pumpkin_util::{text::TextComponent, PermissionLvl};
 
-use crate::{cache::get_playtime_display, utils::neutral_colour};
+use crate::{
+    cache::{get_playtime_display, get_playtime_display_cache},
+    utils::neutral_colour,
+};
 
 const NAMES: [&str; 2] = ["playtime", "pt"];
 const DESCRIPTION: &str = "Inspect player playtime.";
@@ -26,7 +29,7 @@ struct PlaytimeExecutor;
 impl CommandExecutor for PlaytimeExecutor {
     async fn execute<'a>(
         &self,
-        sender: &mut CommandSender<'a>,
+        sender: &mut CommandSender,
         _: &Server,
         args: &ConsumedArgs<'a>,
     ) -> Result<(), CommandError> {
@@ -35,7 +38,7 @@ impl CommandExecutor for PlaytimeExecutor {
         };
 
         let player = &targets[0];
-        let pt_s = get_playtime_display(&player.gameprofile.id.to_string());
+        let pt_s = get_playtime_display(&player.gameprofile.id.to_string()).await;
         let pt_s = format!("{}'s playtime: {}", player.gameprofile.name, pt_s);
 
         sender
@@ -52,13 +55,13 @@ struct PlaytimeExecutorSelf;
 impl CommandExecutor for PlaytimeExecutorSelf {
     async fn execute<'a>(
         &self,
-        sender: &mut CommandSender<'a>,
+        sender: &mut CommandSender,
         _: &Server,
         _: &ConsumedArgs<'a>,
     ) -> Result<(), CommandError> {
         let player = sender.as_player().unwrap();
 
-        let pt_s = get_playtime_display(&player.gameprofile.id.to_string());
+        let pt_s = get_playtime_display_cache(&player.gameprofile.id.to_string());
         let pt_s = format!("Your playtime: {}", pt_s);
 
         player

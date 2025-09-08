@@ -3,22 +3,39 @@ use crate::{
     utils::neutral_colour,
 };
 use async_trait::async_trait;
-use pumpkin::plugin::{
-    player::{player_join::PlayerJoinEvent, PlayerEvent},
-    EventHandler,
+use pumpkin::{
+    plugin::{
+        player::{player_join::PlayerJoinEvent, PlayerEvent},
+        EventHandler,
+    },
+    server::Server,
 };
 use pumpkin_api_macros::with_runtime;
 use pumpkin_util::text::TextComponent;
+use std::sync::Arc;
 
 pub struct JoinHandler;
 
 #[with_runtime(global)]
 #[async_trait]
 impl EventHandler<PlayerJoinEvent> for JoinHandler {
-    async fn handle_blocking(&self, event: &mut PlayerJoinEvent) {
+    async fn handle_blocking(&self, _server: &Arc<Server>, event: &mut PlayerJoinEvent) {
         let np = match load_player(&event.get_player()).await {
             Ok(np) => np,
-            Err(e) => panic!("Failed to load player: {}", e),
+            Err(err) => {
+                log::error!("Could not load player data: {}", err);
+
+                event
+                    .get_player()
+                    .kick(
+                        pumpkin::net::DisconnectReason::Kicked,
+                        TextComponent::text("Could not load player data.")
+                            .color_rgb(neutral_colour()),
+                    )
+                    .await;
+
+                false
+            }
         };
 
         if np {

@@ -23,7 +23,7 @@ struct StaffchatExecutor;
 impl CommandExecutor for StaffchatExecutor {
     async fn execute<'a>(
         &self,
-        sender: &mut CommandSender<'a>,
+        sender: &mut CommandSender,
         server: &Server,
         args: &ConsumedArgs<'a>,
     ) -> Result<(), CommandError> {

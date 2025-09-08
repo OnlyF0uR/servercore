@@ -3,19 +3,23 @@ use crate::{
     utils::neutral_colour,
 };
 use async_trait::async_trait;
-use pumpkin::plugin::{
-    player::{player_leave::PlayerLeaveEvent, PlayerEvent},
-    EventHandler,
+use pumpkin::{
+    plugin::{
+        player::{player_leave::PlayerLeaveEvent, PlayerEvent},
+        EventHandler,
+    },
+    server::Server,
 };
 use pumpkin_api_macros::with_runtime;
 use pumpkin_util::text::TextComponent;
+use std::sync::Arc;
 
 pub struct LeaveHandler;
 
 #[with_runtime(global)]
 #[async_trait]
 impl EventHandler<PlayerLeaveEvent> for LeaveHandler {
-    async fn handle_blocking(&self, event: &mut PlayerLeaveEvent) {
+    async fn handle_blocking(&self, _server: &Arc<Server>, event: &mut PlayerLeaveEvent) {
         let p = event.get_player();
         let nn = get_nickname(&p.gameprofile.id.to_string());
 

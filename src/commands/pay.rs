@@ -33,7 +33,7 @@ struct PayExecutor;
 impl CommandExecutor for PayExecutor {
     async fn execute<'a>(
         &self,
-        sender: &mut CommandSender<'a>,
+        sender: &mut CommandSender,
         _: &Server,
         args: &ConsumedArgs<'a>,
     ) -> Result<(), CommandError> {

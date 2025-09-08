@@ -20,7 +20,7 @@ struct SetSpawnExecutor;
 impl CommandExecutor for SetSpawnExecutor {
     async fn execute<'a>(
         &self,
-        sender: &mut CommandSender<'a>,
+        sender: &mut CommandSender,
         _: &Server,
         _: &ConsumedArgs<'a>,
     ) -> Result<(), CommandError> {

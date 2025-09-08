@@ -26,9 +26,7 @@ lazy_static! {
     static ref PLAYER_CACHE: DashMap<String, CachePlayer> = DashMap::new();
 }
 
-// Get the amount of seconds the user has been online
-// on the server
-pub fn get_playtime(player_uuid: &str) -> i64 {
+pub fn get_playtime_cache(player_uuid: &str) -> i64 {
     // Get the previous play time
     let old_pt = PLAYER_CACHE.get(player_uuid).map_or(0, |v| v.playtime);
 
@@ -42,28 +40,40 @@ pub fn get_playtime(player_uuid: &str) -> i64 {
     old_pt + diff
 }
 
-pub fn get_playtime_display(player_uuid: &str) -> String {
-    // This is the amount of seconds of playtme
-    let pt = get_playtime(player_uuid);
+// Get the amount of seconds the user has been online
+// on the server
+pub async fn get_playtime(player_uuid: &str) -> i64 {
+    // Get the previous play time
+    let old_pt = match PLAYER_CACHE.get(player_uuid) {
+        Some(v) => v.playtime,
+        None => {
+            // Player isnt online, we may get from
+            sqlx::query_as::<_, DBPlayer>("SELECT playtime FROM players WHERE uuid = $1")
+                .bind(player_uuid)
+                .fetch_one(&get_db().await.pool)
+                .await
+                .map_or(0, |v| v.playtime)
+        }
+    };
 
-    // We need days, hours, minutes, and seconds
-    let days = pt / 86400;
-    let hours = (pt % 86400) / 3600;
-    let minutes = (pt % 3600) / 60;
-    let seconds = pt % 60;
+    // Now we need to calculate how much additional time the user spent on the server
+    let jt = PLAYER_CACHE.get(player_uuid).map_or(0, |v| v.join_time);
+    let ct = current_sec();
 
-    // We need to format the string but make sure the plural is correct too
-    format!(
-        "{} day{}, {} hour{}, {} minute{}, {} second{}",
-        days,
-        if days == 1 { "" } else { "s" },
-        hours,
-        if hours == 1 { "" } else { "s" },
-        minutes,
-        if minutes == 1 { "" } else { "s" },
-        seconds,
-        if seconds == 1 { "" } else { "s" }
-    )
+    let diff = ct - jt;
+
+    // Return the sum of the old playtime and the time spent on the server
+    old_pt + diff
+}
+
+pub fn get_playtime_display_cache(player_uuid: &str) -> String {
+    let pt = get_playtime_cache(player_uuid);
+    pt_to_string(pt)
+}
+
+pub async fn get_playtime_display(player_uuid: &str) -> String {
+    let pt = get_playtime(player_uuid).await;
+    pt_to_string(pt)
 }
 
 pub fn get_nickname(player_uuid: &str) -> String {
@@ -98,7 +108,7 @@ pub async fn load_player(
     let mut new_player = false;
 
     let db_player = match sqlx::query_as::<_, DBPlayer>(
-        "SELECT nickname, playtime FROM players WHERE uuid = $1",
+        "SELECT nickname, playtime, balance FROM players WHERE uuid = $1",
     )
     .bind(player.gameprofile.id.to_string())
     .fetch_one(&db.pool)
@@ -146,7 +156,7 @@ pub async fn resolve_player(
     // Playtime is not updated by some function so we,
     // will get the "updated" playtime here, which is the playtime at join
     // plus the passed time since join
-    let pt = get_playtime(player_uuid);
+    let pt = get_playtime(player_uuid).await;
 
     let db = get_db().await;
     sqlx::query("UPDATE players SET nickname = $1, playtime = $2, balance = $3 WHERE uuid = $4")
@@ -159,4 +169,25 @@ pub async fn resolve_player(
 
     PLAYER_CACHE.remove(player_uuid);
     Ok(())
+}
+
+fn pt_to_string(pt: i64) -> String {
+    // We need days, hours, minutes, and seconds
+    let days = pt / 86400;
+    let hours = (pt % 86400) / 3600;
+    let minutes = (pt % 3600) / 60;
+    let seconds = pt % 60;
+
+    // We need to format the string but make sure the plural is correct too
+    format!(
+        "{} day{}, {} hour{}, {} minute{}, {} second{}",
+        days,
+        if days == 1 { "" } else { "s" },
+        hours,
+        if hours == 1 { "" } else { "s" },
+        minutes,
+        if minutes == 1 { "" } else { "s" },
+        seconds,
+        if seconds == 1 { "" } else { "s" }
+    )
 }

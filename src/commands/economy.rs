@@ -33,7 +33,7 @@ struct EcoSetExecutor;
 impl CommandExecutor for EcoSetExecutor {
     async fn execute<'a>(
         &self,
-        sender: &mut CommandSender<'a>,
+        sender: &mut CommandSender,
         _: &Server,
         args: &ConsumedArgs<'a>,
     ) -> Result<(), CommandError> {
@@ -70,7 +70,7 @@ struct EcoAddExecutor;
 impl CommandExecutor for EcoAddExecutor {
     async fn execute<'a>(
         &self,
-        sender: &mut CommandSender<'a>,
+        sender: &mut CommandSender,
         _: &Server,
         args: &ConsumedArgs<'a>,
     ) -> Result<(), CommandError> {
@@ -116,7 +116,7 @@ struct EcoRemoveExecutor;
 impl CommandExecutor for EcoRemoveExecutor {
     async fn execute<'a>(
         &self,
-        sender: &mut CommandSender<'a>,
+        sender: &mut CommandSender,
         _: &Server,
         args: &ConsumedArgs<'a>,
     ) -> Result<(), CommandError> {
@@ -162,7 +162,7 @@ struct EcoResetExecutor;
 impl CommandExecutor for EcoResetExecutor {
     async fn execute<'a>(
         &self,
-        sender: &mut CommandSender<'a>,
+        sender: &mut CommandSender,
         _: &Server,
         args: &ConsumedArgs<'a>,
     ) -> Result<(), CommandError> {

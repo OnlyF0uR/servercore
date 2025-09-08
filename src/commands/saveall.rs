@@ -19,11 +19,11 @@ struct SaveallExecutor;
 impl CommandExecutor for SaveallExecutor {
     async fn execute<'a>(
         &self,
-        sender: &mut CommandSender<'a>,
-        server: &Server,
+        sender: &mut CommandSender,
+        _server: &Server,
         _: &ConsumedArgs<'a>,
     ) -> Result<(), CommandError> {
-        server.save().await;
+        // TODO: Save?
 
         sender
             .send_message(TextComponent::text("Saved all worlds.").color_rgb(success_colour()))

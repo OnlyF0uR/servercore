@@ -28,7 +28,7 @@ struct BalanceExecutor;
 impl CommandExecutor for BalanceExecutor {
     async fn execute<'a>(
         &self,
-        sender: &mut CommandSender<'a>,
+        sender: &mut CommandSender,
         _: &Server,
         args: &ConsumedArgs<'a>,
     ) -> Result<(), CommandError> {
@@ -60,7 +60,7 @@ struct BalanceExecutorSelf;
 impl CommandExecutor for BalanceExecutorSelf {
     async fn execute<'a>(
         &self,
-        sender: &mut CommandSender<'a>,
+        sender: &mut CommandSender,
         _: &Server,
         _: &ConsumedArgs<'a>,
     ) -> Result<(), CommandError> {
